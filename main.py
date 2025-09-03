@@ -15,15 +15,14 @@ CHAT_ID = os.environ.get("CHAT_ID")
 
 # ===== TELEGRAM FUNCTION =====
 def send_telegram(message: str):
-    if not TELEGRAM_TOKEN or not CHAT_ID:
-        print("Telegram token or chat ID not set!")
-        return
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = {"chat_id": CHAT_ID, "text": message}
     try:
-        requests.post(url, json=payload, timeout=10)
+        r = requests.post(url, json=payload, timeout=10)
+        print("Telegram response:", r.status_code, r.text)  # DEBUG line
     except Exception as e:
         print("Telegram error:", repr(e))
+
 
 # ===== VOLUME CHECK FUNCTION =====
 def check_volume_higher(symbol: str):
