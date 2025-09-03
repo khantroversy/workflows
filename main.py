@@ -1,22 +1,23 @@
-!pip install yfinance pandas requests pytz --quiet
-
+import os
 import yfinance as yf
 import pandas as pd
 import requests
-import time
-from datetime import datetime
-import pytz
 
 # ===== CONFIG =====
 PORTFOLIO = [
     "HINDZINC.NS", "HINDCOPPER.NS", "NATIONALUM.NS", "NMDC.NS",
     "LAURUSLABS.NS", "SYNGENE.NS", "RVNL.NS", "CONCOR.NS", "CCL.NS"
 ]
-TELEGRAM_TOKEN = "8086513469:AAG69-SyQuF4VV1SCQVgX01WNcGIL7nBoDY"
-CHAT_ID = "1063530236"
+
+# Read Telegram token and chat ID from GitHub Secrets
+TELEGRAM_TOKEN = os.environ.get("8086513469:AAG69-SyQuF4VV1SCQVgX01WNcGIL7nBoDY")
+CHAT_ID = os.environ.get("1063530236")
 
 # ===== TELEGRAM FUNCTION =====
 def send_telegram(message: str):
+    if not TELEGRAM_TOKEN or not CHAT_ID:
+        print("Telegram token or chat ID not set!")
+        return
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = {"chat_id": CHAT_ID, "text": message}
     try:
@@ -38,7 +39,7 @@ def check_volume_higher(symbol: str):
         return None
 
 # ===== MAIN FUNCTION =====
-def run(debug=False):
+def run():
     hits = []
     for s in PORTFOLIO:
         hit = check_volume_higher(s)
@@ -49,22 +50,8 @@ def run(debug=False):
         send_telegram(msg)
     else:
         send_telegram("No stock has higher volume than yesterday.")
-    if debug:
-        print("Done. Hits:", hits)
+    print("Done. Hits:", hits)
 
-# ===== SCHEDULER (IST) =====
-IST = pytz.timezone("Asia/Kolkata")
-IST_HOUR = 21  # 2 PM IST
-IST_MINUTE = 28
-
-print(f"Scheduler started... will run daily at {IST_HOUR:02d}:{IST_MINUTE:02d} IST")
-
-while True:
-    now_ist = datetime.now(IST)
-    if now_ist.hour == IST_HOUR and now_ist.minute == IST_MINUTE:
-        run(debug=True)
-        time.sleep(61)  # avoid multiple runs in same minute
-    time.sleep(1)
-
-
-#final code to deploy with scheduler
+# Run the bot
+if __name__ == "__main__":
+    run()
