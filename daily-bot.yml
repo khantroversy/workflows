@@ -3,7 +3,7 @@ name: Run Volume Bot Daily
 # Run daily at 14:15 IST
 on:
   schedule:
-    - cron: '14 15 * * *'  # 14:15 IST = 15:28 UTC
+    - cron: '05 17 * * *'  # 14:15 IST = 15:28 UTC
   workflow_dispatch:  # allows manual run
 
 jobs:
