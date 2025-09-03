@@ -1,9 +1,8 @@
 name: Run Volume Bot Daily
-
 on:
+  workflow_dispatch:   # lets you run manually from the Actions tab
   schedule:
-    - cron: '25 17 * * *'  # 22:35 IST
-  workflow_dispatch:  # allows manual run
+    - cron: "25 17 * * *"
 
 jobs:
   run-bot:
