@@ -2,7 +2,7 @@ name: Run Volume Bot Daily
 
 on:
   schedule:
-    - cron: '05 17 * * *'  # 22:35 IST
+    - cron: '25 17 * * *'  # 22:35 IST
   workflow_dispatch:  # allows manual run
 
 jobs:
