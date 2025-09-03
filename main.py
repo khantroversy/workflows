@@ -10,8 +10,8 @@ PORTFOLIO = [
 ]
 
 # Read Telegram token and chat ID from GitHub Secrets
-TELEGRAM_TOKEN = os.environ.get("8086513469:AAG69-SyQuF4VV1SCQVgX01WNcGIL7nBoDY")
-CHAT_ID = os.environ.get("1063530236")
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+CHAT_ID = os.environ.get("CHAT_ID")
 
 # ===== TELEGRAM FUNCTION =====
 def send_telegram(message: str):
