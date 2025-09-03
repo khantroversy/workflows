@@ -2,8 +2,7 @@ name: Run Volume Bot Daily
 on:
   workflow_dispatch:   # lets you run manually from the Actions tab
   schedule:
-    - cron: "25 17 * * *"
-
+    - cron: "00 18 * * *"   # 23:38 IST daily
 jobs:
   run-bot:
     runs-on: ubuntu-latest
