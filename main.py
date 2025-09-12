@@ -6,7 +6,8 @@ import requests
 # ===== CONFIG =====
 PORTFOLIO = [
     "HINDZINC.NS", "HINDCOPPER.NS", "NATIONALUM.NS", "NMDC.NS",
-    "LAURUSLABS.NS", "SYNGENE.NS", "RVNL.NS", "CONCOR.NS", "CCL.NS"
+    "LAURUSLABS.NS", "AARTIPHARM.NS", "BIOCON.NS", "SAILIFE.NS", "GRANULES.NS"
+	"BALUFORGE.NS", "TDPOWERSYS.NS" "IGL.NS", "BORORENEW.NS"
 ]
 
 # Read Telegram token and chat ID from GitHub Secrets
