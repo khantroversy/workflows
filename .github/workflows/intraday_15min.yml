@@ -1,1 +1,29 @@
+name: 15-min Intraday Scanner
 
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # every 15 minutes UTC
+  workflow_dispatch:       # manual run
+
+jobs:
+  run_scanner:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yfinance pandas requests pytz
+
+      - name: Run Intraday Scanner
+        run: python intraday_15min_scanner.py
