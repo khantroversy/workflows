@@ -10,7 +10,7 @@ import sys
 # MANUAL TEST CONFIG
 # ==========================
 # Set MANUAL_TEST=True as environment variable to bypass market hours (manual run)
-MANUAL_TEST = os.environ.get("MANUAL_TEST", "False") == "false"
+MANUAL_TEST = os.environ.get("MANUAL_TEST", "False") == "True"
 
 # ==========================
 # MARKET HOURS CHECK
