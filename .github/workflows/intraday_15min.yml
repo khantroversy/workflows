@@ -2,8 +2,8 @@ name: 15-min Intraday Scanner
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # every 15 minutes UTC
-  workflow_dispatch:       # manual run
+  - cron: '00,15,30,45 3-9 * * 1-5'  # 3:00–9:45 UTC = 9:15–15:30 IST Mon–Fri
+  workflow_dispatch:  # manual run
 
 jobs:
   run_scanner:
