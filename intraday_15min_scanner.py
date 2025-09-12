@@ -3,6 +3,18 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 import requests
+from datetime import datetime, time
+import pytz
+import sys
+
+# ===== MARKET HOURS CHECK =====
+ist = pytz.timezone('Asia/Kolkata')
+now = datetime.now(ist).time()
+market_open = time(9, 15)
+market_close = time(15, 30)
+if not (market_open <= now <= market_close):
+    print("Market closed. Exiting script.")
+    sys.exit()
 
 # ===== CONFIG =====
 STOCKS = [
@@ -15,7 +27,7 @@ TIMEFRAME = '15m'
 LOOKBACK_DAYS = 60
 FOLLOW_THROUGH_CANDLES = 4
 
-# Telegram secrets from GitHub Actions
+# Telegram secrets
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
 
@@ -68,12 +80,10 @@ def scan_stocks():
             future_high = future_slice['High'].max() if not future_slice.empty else current_price
             future_low  = future_slice['Low'].min()  if not future_slice.empty else current_price
 
-            # Bullish setup
             if position_pct >= 85 and current_price > vwap:
                 total_setups += 1
                 if future_high > current_price:
                     success_count += 1
-            # Bearish setup
             elif position_pct <= 15 and current_price < vwap:
                 total_setups += 1
                 if future_low < current_price:
@@ -117,7 +127,7 @@ def run():
     print("=== Individual Stock Setup Table ===")
     print(df_results)
 
-    # Send to Telegram
+    # Telegram
     message_lines = []
     for _, row in df_results.iterrows():
         message_lines.append(f"{row['Stock']}")
