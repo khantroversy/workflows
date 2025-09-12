@@ -68,8 +68,7 @@ for symbol in STOCKS:
 
     # Current price info
     last_candle = data.iloc[-1]
-    last_price = last_candle['Close']
-    last_price = round(last_price, 2)
+    last_price = round(last_candle['Close'], 2)
 
     # Previous day high/low
     prev_day = data.iloc[-2]
@@ -83,7 +82,7 @@ for symbol in STOCKS:
     day_start = len(data) - 1 - ((len(data) - 1) % 26)  # approx 26 candles per trading day
     day_data = data.iloc[day_start:]
     typical_price = (day_data['High'] + day_data['Low'] + day_data['Close']) / 3
-    vwap = (typical_price * day_data['Volume']).sum() / day_data['Volume'].sum()
+    vwap = float((typical_price * day_data['Volume']).sum() / day_data['Volume'].sum())
 
     # VWAP signal
     vwap_signal = 'Above VWAP' if last_price > vwap else 'Below VWAP'
