@@ -1,19 +1,26 @@
 name: 15-min Intraday Scanner
 
+# Run every 15 minutes during market hours (India IST)
+# GitHub cron is in UTC, so 9:15–15:30 IST = 3:45–10:00 UTC
+# We’ll run every 15 min UTC 3:45–10:00, but GitHub cron cannot limit hours precisely,
+# so we run every 15 min and the script itself checks market hours.
 on:
   schedule:
-    - cron: '*/15 * * * *'  # every 15 minutes
-  workflow_dispatch:         # manual trigger
+    - cron: '*/15 * * * *'  # every 15 minutes UTC
+  workflow_dispatch:       # allows manual testing
 
 jobs:
-  run-scanner:
+  run_scanner:
     runs-on: ubuntu-latest
-
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
+      MANUAL_TEST: "False"   # change to "True" for manual test runs
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
@@ -21,11 +28,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install yfinance pandas numpy requests pytz
+          pip install yfinance pandas requests pytz
 
       - name: Run Intraday Scanner
-        env:
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          CHAT_ID: ${{ secrets.CHAT_ID }}
-        run: |
-          python intraday_15min_scanner.py
+        run: python intraday_15min_scanner.py
