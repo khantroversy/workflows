@@ -82,7 +82,9 @@ for symbol in STOCKS:
     day_start = len(data) - 1 - ((len(data) - 1) % 26)  # approx 26 candles per trading day
     day_data = data.iloc[day_start:]
     typical_price = (day_data['High'] + day_data['Low'] + day_data['Close']) / 3
-    vwap = float((typical_price * day_data['Volume']).sum() / day_data['Volume'].sum())
+    vwap_series = (typical_price * day_data['Volume']).sum() / day_data['Volume'].sum()
+    # Force scalar safely
+    vwap = float(vwap_series) if not isinstance(vwap_series, pd.Series) else float(vwap_series.iloc[0])
 
     # VWAP signal
     vwap_signal = 'Above VWAP' if last_price > vwap else 'Below VWAP'
