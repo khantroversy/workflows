@@ -7,9 +7,10 @@ import pytz
 import sys
 
 # ==========================
-# TEST MODE CONFIG
+# MANUAL TEST CONFIG
 # ==========================
-TEST_MODE = True  # 🔹 Set True for testing outside market hours
+# Set MANUAL_TEST=True as environment variable to bypass market hours (manual run)
+MANUAL_TEST = os.environ.get("MANUAL_TEST", "False") == "True"
 
 # ==========================
 # MARKET HOURS CHECK
@@ -19,11 +20,11 @@ now = datetime.now(ist).time()
 market_open = time(9, 15)
 market_close = time(15, 30)
 
-if not (market_open <= now <= market_close) and not TEST_MODE:
+if not (market_open <= now <= market_close) and not MANUAL_TEST:
     print("Market closed. Exiting script.")
     sys.exit()
-elif TEST_MODE:
-    print("🚀 TEST MODE ACTIVE: Running script outside market hours")
+elif MANUAL_TEST:
+    print("🚀 Manual test mode active: Running outside market hours")
 
 # ==========================
 # CONFIG
@@ -35,9 +36,9 @@ STOCKS = [
 ]
 
 TIMEFRAME = '15m'
-LOOKBACK_DAYS = 60
+LOOKBACK_DAYS = 60  # Yahoo allows max 60 days for 15-min interval
 
-# Telegram secrets
+# Telegram secrets from GitHub Actions
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
 
@@ -78,8 +79,8 @@ def scan_stocks():
 
         last_position = ((last_price - prev_low) / (prev_high - prev_low)) * 100
 
-        # VWAP calculation
-        day_start = len(data) - 1 - ((len(data) - 1) % 26)
+        # VWAP calculation for current day
+        day_start = len(data) - 1 - ((len(data) - 1) % 26)  # approx 26 candles per trading day
         day_data = data.iloc[day_start:]
         typical_price = (day_data['High'] + day_data['Low'] + day_data['Close']) / 3
         vwap = (typical_price * day_data['Volume']).sum() / day_data['Volume'].sum()
@@ -111,11 +112,11 @@ def run():
     print("=== Individual Stock Setup Table ===")
     print(df_results)
 
-    # Telegram message
     if df_results.empty:
         print("No stocks found.")
         return
 
+    # Prepare Telegram message
     message_lines = []
     for _, row in df_results.iterrows():
         message_lines.append(f"{row['Stock']}")
