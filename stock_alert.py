@@ -36,26 +36,26 @@ for stock in stocks:
     else:
         status = "Near HVZ"
 
-    # Perfect Confluence logic (kept exactly your current logic)
+    # Perfect Confluence logic
     if status == "Near HVZ" and todays_low <= high_vol_price and todays_low >= yesterdays_low:
         perfect_confluence = "Yes"
     else:
         perfect_confluence = "No"
 
     table_data.append({
-        "Stock (CMP)": f"{stock.split('.')[0]} ({cmp})",
-        "10-day Low": low_10,
-        "High Volume Zone": f"{high_vol_price} ({cmp})",
-        "Today's Low": todays_low,
-        "Yesterday's Low": yesterdays_low,
+        "Stock_CMP": f"{stock.split('.')[0]} ({cmp})",
+        "Low_10d": low_10,
+        "High_Volume_Zone": f"{high_vol_price} ({cmp})",
+        "Todays_Low": todays_low,
+        "Yesterdays_Low": yesterdays_low,
         "Status": status,
-        "Perfect Confluence": perfect_confluence
+        "Perfect_Confluence": perfect_confluence
     })
 
 df = pd.DataFrame(table_data)
 
 # --- Filter only Perfect Confluence = Yes ---
-df_filtered = df[df["Perfect Confluence"] == "Yes"]
+df_filtered = df[df["Perfect_Confluence"] == "Yes"]
 
 if df_filtered.empty:
     message = "No stocks meeting Perfect Confluence at this time."
@@ -63,19 +63,19 @@ else:
     # --- Build stacked Telegram message ---
     message = ""
     for _, row in df_filtered.iterrows():
-        message += f"<b>{row['Stock (CMP)']}</b>\n"
-        message += f"10-day Low: {row['10-day Low']}\n"
-        message += f"High Volume Zone: {row['High Volume Zone']}\n"
-        message += f"Today's Low: {row['Today\'s Low']}\n"
-        message += f"Yesterday's Low: {row['Yesterday\'s Low']}\n"
+        message += f"<b>{row['Stock_CMP']}</b>\n"
+        message += f"10-day Low: {row['Low_10d']}\n"
+        message += f"High Volume Zone: {row['High_Volume_Zone']}\n"
+        message += f"Today's Low: {row['Todays_Low']}\n"
+        message += f"Yesterday's Low: {row['Yesterdays_Low']}\n"
         message += f"Status: {row['Status']}\n"
-        message += f"Perfect Confluence: {row['Perfect Confluence']}\n\n"
+        message += f"Perfect Confluence: {row['Perfect_Confluence']}\n\n"
 
 # --- Send message to Telegram ---
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-CHAT_ID = os.environ["CHAT_ID"]
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+CHAT_ID = os.environ.get("CHAT_ID")
 
-url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
 payload = {
     "chat_id": CHAT_ID,
     "text": message,
