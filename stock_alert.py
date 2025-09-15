@@ -70,8 +70,8 @@ else:
         message += f"<b>{row['Stock (CMP)']}</b>\n"
         message += f"10-day Low: {row['10-day Low']}\n"
         message += f"High Volume Zone: {row['High Volume Zone']}\n"
-        message += f"Today's Low: {row['Today's Low']}\n"
-        message += f"Yesterday's Low: {row['Yesterday's Low']}\n"
+        message += f"Today's Low: {row[\"Today's Low\"]}\n"
+        message += f"Yesterday's Low: {row[\"Yesterday's Low\"]}\n"
         message += f"Status: {row['Status']}\n"
         message += f"Perfect Confluence: {row['Perfect Confluence']}\n\n"
 
