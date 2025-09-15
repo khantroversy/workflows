@@ -67,11 +67,14 @@ else:
     # --- Build stacked Telegram message ---
     message = ""
     for _, row in df_filtered.iterrows():
+        todays_low_val = row["Today's Low"]
+        yesterdays_low_val = row["Yesterday's Low"]
+
         message += f"<b>{row['Stock (CMP)']}</b>\n"
         message += f"10-day Low: {row['10-day Low']}\n"
         message += f"High Volume Zone: {row['High Volume Zone']}\n"
-        message += f"Today's Low: {row[\"Today's Low\"]}\n"
-        message += f"Yesterday's Low: {row[\"Yesterday's Low\"]}\n"
+        message += f"Today's Low: {todays_low_val}\n"
+        message += f"Yesterday's Low: {yesterdays_low_val}\n"
         message += f"Status: {row['Status']}\n"
         message += f"Perfect Confluence: {row['Perfect Confluence']}\n\n"
 
