@@ -37,8 +37,11 @@ for stock in stocks:
         status = "Near HVZ"
 
     # Perfect Confluence logic
-    if status == "Near HVZ" and todays_low <= high_vol_price and todays_low >= yesterdays_low:
-        perfect_confluence = "Yes"
+    if status == "Near HVZ":
+        if todays_low <= high_vol_price and (yesterdays_low is None or yesterdays_low <= high_vol_price):
+            perfect_confluence = "Yes"
+        else:
+            perfect_confluence = "No"
     else:
         perfect_confluence = "No"
 
