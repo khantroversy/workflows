@@ -2,8 +2,26 @@ import yfinance as yf
 import pandas as pd
 import requests
 import os
+from datetime import datetime, time
+import pytz
 
-# -------- Stock list --------
+# ===== Manual run flag =====
+MANUAL_RUN = os.environ.get("MANUAL_RUN", "false").lower() == "true"
+
+# ===== Market hours check (India time) =====
+ist = pytz.timezone("Asia/Kolkata")
+now = datetime.now(ist)
+
+market_open_check = time(9, 15)      # Market opens 9:15 IST
+two_hours_after_open = time(11, 15)  # Run starts 2 hours after open
+market_close = time(15, 30)
+
+if not MANUAL_RUN:
+    if not (two_hours_after_open <= now.time() <= market_close):
+        print("Outside scheduled trading window. Exiting.")
+        exit()
+
+# ===== Stock list =====
 stocks = [
     "HINDZINC.NS", "HINDCOPPER.NS", "NATIONALUM.NS", "NMDC.NS",
     "LAURUSLABS.NS", "AARTIPHARM.NS", "BIOCON.NS", "SAILIFE.NS", "GRANULES.NS",
@@ -13,6 +31,7 @@ stocks = [
 lookback_days = 10
 table_data = []
 
+# ===== Fetch data and calculate confluence =====
 for stock in stocks:
     hist = yf.download(stock, period=f"{lookback_days}d", interval="1d", auto_adjust=True)
     if hist.empty:
@@ -54,13 +73,13 @@ for stock in stocks:
 
 df = pd.DataFrame(table_data)
 
-# --- Filter only Perfect Confluence = Yes ---
+# ===== Filter only Perfect Confluence =====
 df_filtered = df[df["Perfect_Confluence"] == "Yes"]
 
+# ===== Build stacked Telegram message =====
 if df_filtered.empty:
     message = "No stocks meeting Perfect Confluence at this time."
 else:
-    # --- Build stacked Telegram message ---
     message = ""
     for _, row in df_filtered.iterrows():
         message += f"<b>{row['Stock_CMP']}</b>\n"
@@ -71,16 +90,15 @@ else:
         message += f"Status: {row['Status']}\n"
         message += f"Perfect Confluence: {row['Perfect_Confluence']}\n\n"
 
-# --- Send message to Telegram ---
+# ===== Send message to Telegram =====
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
 
 url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-payload = {
-    "chat_id": CHAT_ID,
-    "text": message,
-    "parse_mode": "HTML"
-}
+payload = {"chat_id": CHAT_ID, "text": message, "parse_mode": "HTML"}
 
-response = requests.post(url, data=payload)
-print(response.json())  # confirms if message sent successfully
+try:
+    r = requests.post(url, json=payload, timeout=10)
+    print("Telegram response:", r.status_code, r.text)
+except Exception as e:
+    print("Telegram error:", repr(e))
