@@ -3,7 +3,9 @@ name: Stock Confluence Alerts
 on:
   workflow_dispatch: # allows manual run
   schedule:
-    - cron: '15 10-15 * * 1-5' # every 15 mins from 10:15 to 15:15, Mon-Fri (adjust for market hours)
+    # Every 15 minutes from 9:30–15:30 IST (4:00–10:00 UTC), Mon-Fri
+    - cron: '0,15,30,45 4-9 * * 1-5'
+    - cron: '0 10 * * 1-5'
 
 jobs:
   send_alerts:
